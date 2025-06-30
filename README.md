@@ -55,6 +55,14 @@ A comprehensive, enterprise-grade market data anomaly detection system built wit
 - **Volume Anomalies** - Identifies unusual trading volumes
 - **ML-based Detection** - Advanced pattern recognition
 
+### Web Dashboard & Visualization
+- **Real-time Monitoring**: Live anomaly updates with auto-refresh every 30 seconds
+- **Interactive Charts**: Timeline, severity distribution, symbol analysis with Recharts
+- **Advanced Filtering**: Multi-dimensional filtering by symbol, type, severity, date range
+- **Anomaly Management**: Acknowledge and resolve anomalies with full audit trail
+- **System Health**: Real-time monitoring of all backend services with status indicators
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+
 ### Enterprise Features
 - **Containerized deployment** with Docker Compose
 - **Health monitoring** and metrics collection
@@ -76,6 +84,10 @@ MarketDataAnomalyDetection/
 ├── python-services/              # Python services
 │   ├── detection-engine/         # Core detection algorithms
 │   └── ml-models/               # Machine learning models
+├── web-dashboard/                # React web dashboard
+│   ├── src/                     # React components and services
+│   ├── public/                  # Static assets
+│   └── build/                   # Production build
 ├── shared/                       # Shared configurations
 │   └── config/                  # YAML configuration files
 ├── infrastructure/               # Infrastructure as code
@@ -91,6 +103,12 @@ MarketDataAnomalyDetection/
 - **Python 3.9+** with FastAPI
 - **Apache Pulsar 3.1** for stream processing
 - **Maven** for Java dependency management
+
+### Frontend Dashboard
+- **React 18** with TypeScript
+- **Ant Design 5.x** for UI components
+- **Recharts** for data visualization
+- **Responsive design** for all devices
 
 ### Machine Learning
 - **scikit-learn** for ML algorithms
@@ -157,6 +175,28 @@ python3 test-complete-system.py
 ./start-system.sh
 ```
 
+### 7. Start Web Dashboard
+```bash
+# Development mode with hot reload
+./start-web-dashboard.sh dev
+
+# Or build for production
+./start-web-dashboard.sh build
+
+# Or run with Docker
+./start-web-dashboard.sh docker
+```
+
+The dashboard will be available at `http://localhost:3000`
+
+#### Web Dashboard Features
+- **📊 Real-time Dashboard**: Live anomaly monitoring with auto-refresh
+- **📈 Interactive Charts**: Multiple visualization types (timeline, pie, bar charts)
+- **🔍 Advanced Filtering**: Filter by symbol, type, severity, date range, status
+- **⚡ Anomaly Management**: Acknowledge and resolve anomalies with notes
+- **💚 System Health**: Monitor all backend services in real-time
+- **📱 Responsive Design**: Optimized for desktop, tablet, and mobile
+
 ## 📊 Service Endpoints
 
 | Service | Port | Health Check | Description |
@@ -167,6 +207,7 @@ python3 test-complete-system.py
 | Alert Service | 8083 | `/health` | Alert management |
 | Dashboard API | 8084 | `/health` | Dashboard backend |
 | Detection Engine | 8085 | `/health` | Python ML service |
+| Web Dashboard | 3000 | `/` | React web interface |
 
 ## 🔧 Configuration
 
