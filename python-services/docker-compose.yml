@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  detection-engine:
+    build: ./detection-engine
+    ports:
+      - "8085:8085"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./detection-engine/src:/app/src
+    networks:
+      - anomaly-detection-network
+
+networks:
+  anomaly-detection-network:
+    external: true

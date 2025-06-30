@@ -1,0 +1,129 @@
+# Data Source Configurations
+data_sources:
+  - name: "gemfire_realtime"
+    type: "gemfire"
+    description: "Real-time market data from Gemfire cache"
+    connection_params:
+      locators: "localhost:10334"
+      username: null
+      password: null
+      regions:
+        - "market_data"
+        - "quotes"
+        - "trades"
+    expected_symbols:
+      - "AAPL"
+      - "GOOGL"
+      - "MSFT"
+      - "TSLA"
+      - "AMZN"
+      - "META"
+    expected_data_types:
+      - "price"
+      - "quote"
+      - "trade"
+    update_frequency_minutes: 1
+    market_open_time: "09:30"
+    market_close_time: "16:00"
+    timezone: "US/Eastern"
+    detection_settings:
+      enable_missing_data_detection: true
+      enable_price_movement_detection: true
+      enable_stale_data_detection: true
+      missing_data_threshold_minutes: 5
+      price_movement_threshold_percent: 3.0
+      stale_data_threshold_minutes: 10
+
+  - name: "mssql_historical"
+    type: "mssql"
+    description: "Historical market data from MSSQL database"
+    connection_params:
+      server: "localhost"
+      database: "MarketData"
+      username: "sa"
+      password: "Password123"
+      driver: "ODBC Driver 17 for SQL Server"
+    expected_symbols:
+      - "AAPL"
+      - "GOOGL"
+      - "MSFT"
+      - "TSLA"
+      - "AMZN"
+      - "META"
+    expected_data_types:
+      - "price"
+      - "volume"
+      - "trade"
+    update_frequency_minutes: 60
+    market_open_time: "09:30"
+    market_close_time: "16:00"
+    timezone: "US/Eastern"
+    detection_settings:
+      enable_missing_data_detection: true
+      enable_price_movement_detection: false
+      enable_stale_data_detection: true
+      missing_data_threshold_minutes: 120
+      stale_data_threshold_minutes: 1440  # 24 hours
+
+  - name: "eod_data"
+    type: "eod"
+    description: "End-of-day market data"
+    connection_params:
+      data_path: "/data/eod"
+      file_pattern: "eod_*.csv"
+      expected_arrival_time: "18:00"
+    expected_symbols:
+      - "AAPL"
+      - "GOOGL"
+      - "MSFT"
+      - "TSLA"
+      - "AMZN"
+      - "META"
+    expected_data_types:
+      - "price"
+      - "volume"
+    update_frequency_minutes: 1440  # Daily
+    market_open_time: "09:30"
+    market_close_time: "16:00"
+    timezone: "US/Eastern"
+    detection_settings:
+      enable_missing_data_detection: true
+      enable_price_movement_detection: true
+      enable_stale_data_detection: true
+      missing_data_threshold_minutes: 60
+      price_movement_threshold_percent: 10.0
+      stale_data_threshold_minutes: 1500  # 25 hours
+
+  - name: "hbase_archive"
+    type: "hbase"
+    description: "Archived market data in HBase"
+    connection_params:
+      host: "localhost"
+      port: 9090
+      timeout: 30000
+      table_prefix: "market_data"
+      column_families:
+        - "prices"
+        - "volumes"
+        - "metadata"
+    expected_symbols:
+      - "AAPL"
+      - "GOOGL"
+      - "MSFT"
+      - "TSLA"
+      - "AMZN"
+      - "META"
+    expected_data_types:
+      - "price"
+      - "volume"
+      - "reference"
+    update_frequency_minutes: 1440  # Daily batch load
+    market_open_time: "09:30"
+    market_close_time: "16:00"
+    timezone: "US/Eastern"
+    detection_settings:
+      enable_missing_data_detection: true
+      enable_price_movement_detection: false
+      enable_stale_data_detection: true
+      missing_data_threshold_minutes: 2880  # 48 hours
+      stale_data_threshold_minutes: 4320   # 72 hours

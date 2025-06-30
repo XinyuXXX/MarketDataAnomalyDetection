@@ -1,0 +1,166 @@
+# Anomaly Detection Rules Configuration
+detection_rules:
+  # Data Missing Detection Rules
+  missing_data_rules:
+    - name: "realtime_data_missing"
+      description: "Detect missing real-time data"
+      data_sources: ["gemfire_realtime"]
+      symbols: []  # Empty means all symbols
+      threshold_minutes: 5
+      severity: "high"
+      active_during_market_hours_only: true
+      
+    - name: "eod_data_missing"
+      description: "Detect missing EOD data"
+      data_sources: ["eod_data"]
+      symbols: []
+      threshold_minutes: 60
+      severity: "critical"
+      active_during_market_hours_only: false
+      
+    - name: "historical_data_gap"
+      description: "Detect gaps in historical data"
+      data_sources: ["mssql_historical", "hbase_archive"]
+      symbols: []
+      threshold_minutes: 120
+      severity: "medium"
+      active_during_market_hours_only: false
+
+  # Price Movement Detection Rules
+  price_movement_rules:
+    - name: "large_price_movement"
+      description: "Detect abnormally large price movements"
+      data_sources: ["gemfire_realtime"]
+      symbols: ["AAPL", "GOOGL", "MSFT", "TSLA"]
+      threshold_percent: 5.0
+      time_window_minutes: 15
+      severity: "high"
+      active_during_market_hours_only: true
+      
+    - name: "extreme_price_movement"
+      description: "Detect extreme price movements"
+      data_sources: ["gemfire_realtime"]
+      symbols: []
+      threshold_percent: 10.0
+      time_window_minutes: 5
+      severity: "critical"
+      active_during_market_hours_only: true
+      
+    - name: "eod_price_anomaly"
+      description: "Detect EOD price anomalies"
+      data_sources: ["eod_data"]
+      symbols: []
+      threshold_percent: 15.0
+      time_window_minutes: 1440  # Daily comparison
+      severity: "medium"
+      active_during_market_hours_only: false
+
+  # Data Stale Detection Rules
+  stale_data_rules:
+    - name: "realtime_data_stale"
+      description: "Detect stale real-time data"
+      data_sources: ["gemfire_realtime"]
+      symbols: []
+      threshold_minutes: 10
+      severity: "medium"
+      active_during_market_hours_only: true
+      
+    - name: "cache_data_very_stale"
+      description: "Detect very stale cache data"
+      data_sources: ["gemfire_realtime"]
+      symbols: []
+      threshold_minutes: 30
+      severity: "high"
+      active_during_market_hours_only: true
+      
+    - name: "historical_data_stale"
+      description: "Detect stale historical data"
+      data_sources: ["mssql_historical", "hbase_archive"]
+      symbols: []
+      threshold_minutes: 1440  # 24 hours
+      severity: "low"
+      active_during_market_hours_only: false
+
+  # Volume Spike Detection Rules
+  volume_spike_rules:
+    - name: "unusual_volume_spike"
+      description: "Detect unusual volume spikes"
+      data_sources: ["gemfire_realtime"]
+      symbols: []
+      threshold_multiplier: 5.0  # 5x normal volume
+      time_window_minutes: 30
+      severity: "medium"
+      active_during_market_hours_only: true
+      
+    - name: "extreme_volume_spike"
+      description: "Detect extreme volume spikes"
+      data_sources: ["gemfire_realtime"]
+      symbols: []
+      threshold_multiplier: 10.0  # 10x normal volume
+      time_window_minutes: 15
+      severity: "high"
+      active_during_market_hours_only: true
+
+  # Data Quality Rules
+  data_quality_rules:
+    - name: "invalid_price_data"
+      description: "Detect invalid price data"
+      data_sources: []  # Apply to all sources
+      symbols: []
+      checks:
+        - type: "null_check"
+          fields: ["price"]
+        - type: "range_check"
+          field: "price"
+          min_value: 0.01
+          max_value: 10000.0
+        - type: "negative_check"
+          fields: ["price", "volume"]
+      severity: "high"
+      active_during_market_hours_only: false
+      
+    - name: "duplicate_data_check"
+      description: "Detect duplicate data entries"
+      data_sources: []
+      symbols: []
+      time_window_minutes: 5
+      severity: "medium"
+      active_during_market_hours_only: false
+
+# Global Detection Settings
+global_settings:
+  # Time windows for different types of analysis
+  time_windows:
+    short_term_minutes: 15
+    medium_term_minutes: 60
+    long_term_minutes: 240
+    
+  # Market hours configuration
+  market_hours:
+    timezone: "US/Eastern"
+    regular_hours:
+      start: "09:30"
+      end: "16:00"
+    extended_hours:
+      pre_market_start: "04:00"
+      pre_market_end: "09:30"
+      after_market_start: "16:00"
+      after_market_end: "20:00"
+    
+  # Processing settings
+  processing:
+    batch_size: 1000
+    max_concurrent_checks: 10
+    check_interval_seconds: 30
+    
+  # Thresholds
+  default_thresholds:
+    missing_data_minutes: 30
+    price_movement_percent: 5.0
+    stale_data_minutes: 60
+    volume_spike_multiplier: 3.0
+    
+  # Severity escalation
+  severity_escalation:
+    escalation_time_minutes: 30
+    max_escalation_level: "critical"

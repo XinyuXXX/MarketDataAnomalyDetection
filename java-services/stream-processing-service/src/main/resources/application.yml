@@ -1,0 +1,53 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: stream-processing-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/anomaly_detection
+    username: admin
+    password: password123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+
+# Pulsar Configuration
+pulsar:
+  service:
+    url: pulsar://localhost:6650
+  admin:
+    url: http://localhost:8080
+
+# Detection Engine Configuration
+detection:
+  engine:
+    url: http://localhost:8085
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.marketdata: INFO
+    org.springframework.kafka: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
